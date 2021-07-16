@@ -97,7 +97,7 @@ def not_found(error=None):
         'status': 404
     })
     response.status_code = 404 #el código de estado 
-    return response
+    return response #es la respuesta
 
 if __name__=="__main__":
     app.run(debug=True)
