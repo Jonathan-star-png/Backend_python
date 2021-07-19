@@ -8,19 +8,21 @@ app = Flask(__name__)
 app.config['MONGO_URI']='mongodb://localhost/pythonmongodb'#conexion a mongodb
 mongo = PyMongo(app)#variable para acceder a mongodb
 
-@app.route('/createUsers', methods=['POST'])
+@app.route('/users', methods=['POST'])
 def create_user():
     # Recibimos datos
     username = request.json['username']
     password = request.json['password']
     email = request.json['email']
+    active = request.json['active']
+    creationDate = request.json['creationDate']
 
-    if username and email and password:
+    if username and email and password and active and creationDate:
         #ciframos la contraseña de los usuarios
         hashed_password=generate_password_hash(password)
         #insertamos en la colección
         id = mongo.db.users.insert(
-            {'username':username, 'email':email, 'password':hashed_password}
+            {'username':username, 'email':email, 'password':hashed_password, 'active':active, 'creationDate':creationDate}
         )
 
         #respuesta cuando creamos el usuario
@@ -28,7 +30,9 @@ def create_user():
             'id': str(id),
             'username':username,
             'email':email,
-            'password':hashed_password
+            'password':hashed_password,
+            'active':active,
+            'creationDate':creationDate
         }
         return response
     else:
@@ -36,48 +40,39 @@ def create_user():
 
     return {'message': 'received'}
 
-@app.route('/getUsers', methods=['GET'])
+@app.route('/users', methods=['GET'])
 def get_users():
+    active=request.args
+    print(active)
     #obtener los datos que tenemos en la db
+    # users = mongo.db.users.find({'active':'true'})
     users = mongo.db.users.find()
     # convertir de bson a json
     response = json_util.dumps(users)
     # el cliente lo vera como un string es por eso que necesitamos el mimetype 
     return Response(response, mimetype='application/json')
 
-@app.route('/getUser', methods=['GET'])
-def get_user():
-    id = request.json['id']
+@app.route('/user/<id>', methods=['GET'])
+def get_user(id):
+    #Con fine_one vamos a obtener unicamente el primer dato con el que haga match
+    user = mongo.db.users.find_one({'_id':ObjectId(id)}) #convertimos el id string a un ObjectId
+    response = json_util.dumps(user)
+    return Response(response, mimetype="application/json")
+   
 
-    if id:
-        #Con fine_one vamos a obtener unicamente el primer dato con el que haga match
-        user = mongo.db.users.find_one({'_id':ObjectId(id)}) #convertimos el id string a un ObjectId
-        response = json_util.dumps(user)
-        return Response(response, mimetype="application/json")
-    else:
-        return not_found()
+@app.route('/user/<id>', methods=['DELETE'])
+def delete_user(id):
+    mongo.db.users.delete_one({'_id': ObjectId(id)})
+    response = jsonify({'message':'User ' + id + ' was Deleted successfully'}) 
+    return response
 
-    return {'message': 'received'}
-
-@app.route('/deleteUser', methods=['DELETE'])
-def delete_user():
-    id = request.json['id']
-    if id:
-        mongo.db.users.delete_one({'_id': ObjectId(id)})
-        response = jsonify({'message':'User ' + id + ' was Deleted successfully'}) 
-        return response
-    else:
-        return not_found()
-    return {'message': 'received'}
-
-@app.route('/updateUser', methods=['PUT'])
-def update_user():
-    id = request.json['id']
+@app.route('/user/<id>', methods=['PUT'])
+def update_user(id):
     username = request.json['username']
     password = request.json['password']
     email = request.json['email']
     
-    if id and username and email and password:
+    if username and email and password:
         hashed_password=generate_password_hash(password)
         mongo.db.users.update_one({'_id':ObjectId(id)}, {'$set':{
             'username':username,
