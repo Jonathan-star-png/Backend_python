@@ -42,14 +42,60 @@ def create_user():
 
 @app.route('/users', methods=['GET'])
 def get_users():
-    active=request.args
-    print(active)
-    #obtener los datos que tenemos en la db
-    # users = mongo.db.users.find({'active':'true'})
-    users = mongo.db.users.find()
-    # convertir de bson a json
+    arguments=request.args
+    if arguments != {}:
+        if 'active' in arguments and not('creationDate>' in arguments or 'creationDate<' in arguments):
+            response=filter_active(arguments['active'])
+            return response
+        if ('creationDate>' in arguments or 'creationDate<' in arguments) and not('active' in arguments):
+            for clave,val in arguments.items():
+                response=slice_string(clave)
+                result=filter_date(response,arguments[response[0]+response[1]])
+            response=result
+            return response
+        if 'active' in arguments and ('creationDate>' in arguments or 'creationDate<' in arguments):
+            if 'creationDate>' in arguments or 'creationDate<' in arguments:
+                for clave,val in arguments.items():
+                    if clave == 'creationDate>' or clave == 'creationDate<':
+                        response=slice_string(clave)
+                        result=filter_active_date(arguments['active'],response,arguments[response[0]+response[1]])
+                        response=result
+                        return response     
+    else:
+        #obtener los datos que tenemos en la db
+        # users = mongo.db.users.find({'active':'true'})
+        users = mongo.db.users.find()
+        # convertir de bson a json
+        response = json_util.dumps(users)
+        # el cliente lo vera como un string es por eso que necesitamos el mimetype 
+        return Response(response, mimetype='application/json')
+
+def filter_active(active):
+    users = mongo.db.users.find({'active':active})
     response = json_util.dumps(users)
-    # el cliente lo vera como un string es por eso que necesitamos el mimetype 
+    return Response(response, mimetype='application/json')
+
+def slice_string(my_str):
+    my_string=str(my_str)
+    symbol = my_string[-1]
+    key = my_string[:-1]
+    response = [key,symbol]
+    return response
+
+def filter_date(key,values):
+    if key[1]=='>':
+        filter=mongo.db.users.find({key[0]:{"$gte": (values)}})
+    if key[1]=='<':
+        filter=mongo.db.users.find({key[0]:{"$lte": (values)}})     
+    response = json_util.dumps(filter)
+    return Response(response, mimetype='application/json')
+
+def filter_active_date(active,key,values):
+    if key[1]=='>':
+        filter=mongo.db.users.find({"$and":[{"active":active},{key[0]:{"$gte": (values)}}]})
+    if key[1]=='<':
+        filter=mongo.db.users.find({"$and":[{"active":active},{key[0]:{"$lte": (values)}}]})   
+    response = json_util.dumps(filter)
     return Response(response, mimetype='application/json')
 
 @app.route('/user/<id>', methods=['GET'])
@@ -71,13 +117,17 @@ def update_user(id):
     username = request.json['username']
     password = request.json['password']
     email = request.json['email']
+    active = request.json['active']
+    creationDate = request.json['creationDate']
     
     if username and email and password:
         hashed_password=generate_password_hash(password)
         mongo.db.users.update_one({'_id':ObjectId(id)}, {'$set':{
             'username':username,
             'password':hashed_password,
-            'email':email
+            'email':email,
+            'active':active,
+            'creationDate':creationDate
         }})
         response = jsonify({'message': 'User ' + id + 'was update successfully'})
         return response
