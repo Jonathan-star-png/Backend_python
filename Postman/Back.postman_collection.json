@@ -18,7 +18,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\":\"Ana\",\r\n    \"email\":\"ana@gmail.com\",\r\n    \"password\":\"anapassword\",\r\n    \"active\": \"false\",\r\n    \"creationDate\":\"22/07/2021\"\r\n}"
+					"raw": "{\r\n    \"username\":\"Edna\",\r\n    \"email\":\"Edna@gmail.com\",\r\n    \"password\":\"Ednapassword\",\r\n    \"active\": \"true\",\r\n    \"creationDate\":\"27/07/2021\"\r\n}"
 				},
 				"url": {
 					"raw": "http://localhost:5000/users",
@@ -85,7 +85,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:5000/users?active=true&creationDate>=18/07/2021",
+					"raw": "http://localhost:5000/users?active=true&creationDate>=20/07/2021",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -101,7 +101,7 @@
 						},
 						{
 							"key": "creationDate>",
-							"value": "18/07/2021"
+							"value": "20/07/2021"
 						}
 					]
 				}
@@ -127,15 +127,15 @@
 					"raw": "{\r\n    \"id\":\"60f1d9dccd4a51af9d3dd5f2\"\r\n}"
 				},
 				"url": {
-					"raw": "http://localhost:5000/user/60f898a9a8ad304656810140",
+					"raw": "http://localhost:5000/users/61006487ebef53b855bb9169",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"user",
-						"60f898a9a8ad304656810140"
+						"users",
+						"61006487ebef53b855bb9169"
 					]
 				}
 			},
@@ -157,15 +157,15 @@
 					"raw": "{\r\n    \"id\":\"60f1d47a0ce3c4b98c343508\"\r\n}"
 				},
 				"url": {
-					"raw": "http://localhost:5000/user/60f898a9a8ad304656810140",
+					"raw": "http://localhost:5000/users/6102cd91be786beb47d5a4d9",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"user",
-						"60f898a9a8ad304656810140"
+						"users",
+						"6102cd91be786beb47d5a4d9"
 					]
 				}
 			},
@@ -187,15 +187,248 @@
 					"raw": "{\r\n    \"username\":\"juan\",\r\n    \"email\":\"juan@gmail.com\",\r\n    \"password\":\"juanpassword\",\r\n    \"active\": \"true\",\r\n    \"creationDate\":\"21/07/2021\"\r\n}"
 				},
 				"url": {
-					"raw": "http://localhost:5000/user/60f898a9a8ad304656810140",
+					"raw": "http://localhost:5000/users/60f898a9a8ad304656810140",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
-						"user",
+						"users",
 						"60f898a9a8ad304656810140"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createProject",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"projectName\":\"Proyecto 5\",\r\n    \"projectType\":\"Tecnología\",\r\n    \"userId\":\"61006499ebef53b855bb916a\",\r\n    \"active\": \"false\",\r\n    \"creationDate\":\"26/07/2021\",\r\n    \"description\":\"descripcion del proyecto 5\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/projects",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"projects"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getProjects",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:5000/projects",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"projects"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "filterProjects",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:5000/projects?active=false&creationDate>=26/07/2021",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"projects"
+					],
+					"query": [
+						{
+							"key": "active",
+							"value": "false"
+						},
+						{
+							"key": "creationDate>",
+							"value": "26/07/2021"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getProject",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":\"60f1d9dccd4a51af9d3dd5f2\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/projects/61006537ebef53b855bb916e",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"projects",
+						"61006537ebef53b855bb916e"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteUser Copy",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":\"60f1d47a0ce3c4b98c343508\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/projects/61006de66386d75f871067d5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"projects",
+						"61006de66386d75f871067d5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateProject",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"projectName\": \"Proyecto 4\",\r\n    \"projectType\": \"Tecnología\",\r\n    \"userId\": \"61006499ebef53b855bb916a\",\r\n    \"active\": \"false\",\r\n    \"creationDate\": \"26/07/2021\",\r\n    \"description\": \"descripcion del proyecto 4\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/projects/61006775743b807f60c56b0f",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"projects",
+						"61006775743b807f60c56b0f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getProjectUser",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://0.0.0.0:5000/users/61006487ebef53b855bb9169/projects",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "5000",
+					"path": [
+						"users",
+						"61006487ebef53b855bb9169",
+						"projects"
 					]
 				}
 			},
