@@ -127,7 +127,7 @@
 					"raw": "{\r\n    \"id\":\"60f1d9dccd4a51af9d3dd5f2\"\r\n}"
 				},
 				"url": {
-					"raw": "http://localhost:5000/users/61006487ebef53b855bb9169",
+					"raw": "http://localhost:5000/users/61043bf9113c1b2b483f8af7",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -135,7 +135,7 @@
 					"port": "5000",
 					"path": [
 						"users",
-						"61006487ebef53b855bb9169"
+						"61043bf9113c1b2b483f8af7"
 					]
 				}
 			},
@@ -157,7 +157,7 @@
 					"raw": "{\r\n    \"id\":\"60f1d47a0ce3c4b98c343508\"\r\n}"
 				},
 				"url": {
-					"raw": "http://localhost:5000/users/6102cd91be786beb47d5a4d9",
+					"raw": "http://localhost:5000/users/61043bf9113c1b2b483f8af7",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -165,7 +165,7 @@
 					"port": "5000",
 					"path": [
 						"users",
-						"6102cd91be786beb47d5a4d9"
+						"61043bf9113c1b2b483f8af7"
 					]
 				}
 			},
@@ -184,10 +184,10 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\":\"juan\",\r\n    \"email\":\"juan@gmail.com\",\r\n    \"password\":\"juanpassword\",\r\n    \"active\": \"true\",\r\n    \"creationDate\":\"21/07/2021\"\r\n}"
+					"raw": "{\r\n    \"username\":\"EdnaActualizada\",\r\n    \"email\":\"Edna@gmail.com\",\r\n    \"password\":\"ednapassword\",\r\n    \"active\": \"true\",\r\n    \"creationDate\":\"27/07/2021\"\r\n}"
 				},
 				"url": {
-					"raw": "http://localhost:5000/users/60f898a9a8ad304656810140",
+					"raw": "http://localhost:5000/users/61043bf9113c1b2b483f8af7",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -195,7 +195,7 @@
 					"port": "5000",
 					"path": [
 						"users",
-						"60f898a9a8ad304656810140"
+						"61043bf9113c1b2b483f8af7"
 					]
 				}
 			},
@@ -214,7 +214,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"projectName\":\"Proyecto 5\",\r\n    \"projectType\":\"Tecnología\",\r\n    \"userId\":\"61006499ebef53b855bb916a\",\r\n    \"active\": \"false\",\r\n    \"creationDate\":\"26/07/2021\",\r\n    \"description\":\"descripcion del proyecto 5\"\r\n}"
+					"raw": "{\r\n    \"projectName\":\"Proyecto 8\",\r\n    \"projectType\":\"Tecnología\",\r\n    \"userId\":\"61006499ebef53b855bb916a\",\r\n    \"active\": \"true\",\r\n    \"creationDate\":\"29/07/2021\",\r\n    \"description\":\"descripcion del proyecto 7\"\r\n}"
 				},
 				"url": {
 					"raw": "http://localhost:5000/projects",
@@ -281,7 +281,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:5000/projects?active=false&creationDate>=26/07/2021",
+					"raw": "http://localhost:5000/projects?active=true&creationDate>=26/07/2021",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -293,7 +293,7 @@
 					"query": [
 						{
 							"key": "active",
-							"value": "false"
+							"value": "true"
 						},
 						{
 							"key": "creationDate>",
@@ -323,7 +323,7 @@
 					"raw": "{\r\n    \"id\":\"60f1d9dccd4a51af9d3dd5f2\"\r\n}"
 				},
 				"url": {
-					"raw": "http://localhost:5000/projects/61006537ebef53b855bb916e",
+					"raw": "http://localhost:5000/projects/61043c4f113c1b2b483f8af8",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -331,7 +331,7 @@
 					"port": "5000",
 					"path": [
 						"projects",
-						"61006537ebef53b855bb916e"
+						"61043c4f113c1b2b483f8af8"
 					]
 				}
 			},
@@ -353,7 +353,7 @@
 					"raw": "{\r\n    \"id\":\"60f1d47a0ce3c4b98c343508\"\r\n}"
 				},
 				"url": {
-					"raw": "http://localhost:5000/projects/61006de66386d75f871067d5",
+					"raw": "http://localhost:5000/projects/61043c4f113c1b2b483f8af8",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -361,7 +361,7 @@
 					"port": "5000",
 					"path": [
 						"projects",
-						"61006de66386d75f871067d5"
+						"61043c4f113c1b2b483f8af8"
 					]
 				}
 			},
@@ -380,10 +380,10 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"projectName\": \"Proyecto 4\",\r\n    \"projectType\": \"Tecnología\",\r\n    \"userId\": \"61006499ebef53b855bb916a\",\r\n    \"active\": \"false\",\r\n    \"creationDate\": \"26/07/2021\",\r\n    \"description\": \"descripcion del proyecto 4\"\r\n}"
+					"raw": "{\r\n    \"projectName\": \"Proyecto 8\",\r\n    \"projectType\": \"Tecnología\",\r\n    \"userId\": \"61006499ebef53b855bb916a\",\r\n    \"active\": \"true\",\r\n    \"creationDate\": \"29/07/2021\",\r\n    \"description\": \"Actualizado\"\r\n}"
 				},
 				"url": {
-					"raw": "http://localhost:5000/projects/61006775743b807f60c56b0f",
+					"raw": "http://localhost:5000/projects/61043c4f113c1b2b483f8af8",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -391,7 +391,7 @@
 					"port": "5000",
 					"path": [
 						"projects",
-						"61006775743b807f60c56b0f"
+						"61043c4f113c1b2b483f8af8"
 					]
 				}
 			},
@@ -416,7 +416,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://0.0.0.0:5000/users/61006487ebef53b855bb9169/projects",
+					"raw": "http://0.0.0.0:5000/users/61006499ebef53b855bb916a/projects",
 					"protocol": "http",
 					"host": [
 						"0",
@@ -427,7 +427,7 @@
 					"port": "5000",
 					"path": [
 						"users",
-						"61006487ebef53b855bb9169",
+						"61006499ebef53b855bb916a",
 						"projects"
 					]
 				}

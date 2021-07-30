@@ -10,6 +10,9 @@ services:
     environment:
         - FLASK_APP=app.py
         - FLASK_DEBUG=1
+        - MONGO_URI=mongodb://db:27017/pythonmongodb
+    depends_on:
+        - db
     command: flask run --host=0.0.0.0
   db:
     image: mongo:latest

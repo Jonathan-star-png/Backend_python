@@ -5,10 +5,8 @@ from bson import json_util #nos permite convertir del formato bson a json
 from bson.objectid import ObjectId 
 import json
 from datetime import datetime
+from services import userServices, projectServices
 app = Flask(__name__)
-# app.config['MONGO_URI']='mongodb://localhost/pythonmongodb'#conexion a mongodb
-app.config['MONGO_URI']='mongodb://172.19.0.1:27017/pythonmongodb'
-mongo = PyMongo(app)#variable para acceder a mongodb
 
 @app.route('/users', methods=['POST'])
 def create_user():
@@ -20,39 +18,23 @@ def create_user():
     creationDate = request.json['creationDate']
 
     if username and email and password and active and creationDate:
-        #ciframos la contraseña de los usuarios
         hashed_password=generate_password_hash(password)
-        #insertamos en la colección
-        id = mongo.db.users.insert(
-            {'username':username, 'email':email, 'password':hashed_password, 'active':active, 'creationDate':creationDate}
-        )
-
-        #respuesta cuando creamos el usuario
-        response={
-            'id': str(id),
-            'username':username,
-            'email':email,
-            'password':hashed_password,
-            'active':active,
-            'creationDate':creationDate
-        }
+        response=userServices.create_user(username,email,hashed_password,active,creationDate)
         return response
     else:
         return not_found()
-
-    return {'message': 'received'}
 
 @app.route('/users', methods=['GET'])
 def get_users():
     arguments=request.args
     if arguments != {}:
         if 'active' in arguments and not('creationDate>' in arguments or 'creationDate<' in arguments):
-            response=filter_active(arguments['active'])
+            response=userServices.filter_active(arguments['active'])
             return response
         if ('creationDate>' in arguments or 'creationDate<' in arguments) and not('active' in arguments):
             for clave,val in arguments.items():
                 response=slice_string(clave)
-                result=filter_date(response,arguments[response[0]+response[1]])
+                result=userServices.filter_date(response,arguments[response[0]+response[1]])
             response=result
             return response
         if 'active' in arguments and ('creationDate>' in arguments or 'creationDate<' in arguments):
@@ -60,23 +42,12 @@ def get_users():
                 for clave,val in arguments.items():
                     if clave == 'creationDate>' or clave == 'creationDate<':
                         response=slice_string(clave)
-                        result=filter_active_date(arguments['active'],response,arguments[response[0]+response[1]])
+                        result=userServices.filter_active_date(arguments['active'],response,arguments[response[0]+response[1]])
                         response=result
                         return response     
     else:
-        #obtener los datos que tenemos en la db
-        # users = mongo.db.users.find({'active':'true'})
-        users = mongo.db.users.find()
-        # convertir de bson a json
-        response = json_util.dumps(users)
-        # el cliente lo vera como un string es por eso que necesitamos el mimetype 
-        return Response(response, mimetype='application/json')
-        # return response
-
-def filter_active(active):
-    users = mongo.db.users.find({'active':active})
-    response = json_util.dumps(users)
-    return Response(response, mimetype='application/json')
+        response = userServices.get_users()
+        return response
 
 def slice_string(my_str):
     my_string=str(my_str)
@@ -85,33 +56,15 @@ def slice_string(my_str):
     response = [key,symbol]
     return response
 
-def filter_date(key,values):
-    if key[1]=='>':
-        filter=mongo.db.users.find({key[0]:{"$gte": (values)}})
-    if key[1]=='<':
-        filter=mongo.db.users.find({key[0]:{"$lte": (values)}})     
-    response = json_util.dumps(filter)
-    return Response(response, mimetype='application/json')
-
-def filter_active_date(active,key,values):
-    if key[1]=='>':
-        filter=mongo.db.users.find({"$and":[{"active":active},{key[0]:{"$gte": (values)}}]})
-    if key[1]=='<':
-        filter=mongo.db.users.find({"$and":[{"active":active},{key[0]:{"$lte": (values)}}]})   
-    response = json_util.dumps(filter)
-    return Response(response, mimetype='application/json')
 
 @app.route('/users/<id>', methods=['GET'])
 def get_user(id):
-    #Con fine_one vamos a obtener unicamente el primer dato con el que haga match
-    user = mongo.db.users.find_one({'_id':ObjectId(id)}) #convertimos el id string a un ObjectId
-    response = json_util.dumps(user)
-    return Response(response, mimetype="application/json")
+    response = userServices.get_user(id)
+    return response
    
 @app.route('/users/<id>', methods=['DELETE'])
 def delete_user(id):
-    mongo.db.users.delete_one({'_id': ObjectId(id)})
-    response = jsonify({'message':'User ' + id + ' was Deleted successfully'}) 
+    response = userServices.delete_user(id)
     return response
 
 @app.route('/users/<id>', methods=['PUT'])
@@ -122,26 +75,12 @@ def update_user(id):
     active = request.json['active']
     creationDate = request.json['creationDate']
     
-    if username and email and password:
+    if username and email and password and active and creationDate:
         hashed_password=generate_password_hash(password)
-        mongo.db.users.update_one({'_id':ObjectId(id)}, {'$set':{
-            'username':username,
-            'password':hashed_password,
-            'email':email,
-            'active':active,
-            'creationDate':creationDate
-        }})
-        response = jsonify({'message': 'User ' + id + 'was update successfully'})
+        response = userServices.update_user(id,username,hashed_password,email,active,creationDate)
         return response
     else:
         return not_found()
-    return {'message': 'received'}
-
-@app.route('/users/<id>/projects', methods=['GET'])
-def get_user_project(id):
-    user = mongo.db.projects.find({'userId':id})
-    response = json_util.dumps(user)
-    return Response(response, mimetype="application/json")
 
 
 @app.route('/projects', methods=['POST'])
@@ -155,38 +94,22 @@ def project():
     description = request.json['description']
 
     if projectName and projectType and userId and active and creationDate and description:
-        #insertamos en la colección
-        id = mongo.db.projects.insert(
-            {'projectName':projectName, 'projectType':projectType, 'userId':userId,'active':active,'creationDate':creationDate,'description':description}
-        )
-
-        #respuesta cuando creamos el usuario
-        response={
-            'id': str(id),
-            'projectName':projectName,
-            'projectType':projectType,
-            'userId':userId,
-            'active':active,
-            'creationDate':creationDate,
-            'description':description
-        }
+        response=projectServices.create_project(projectName,projectType,userId,active,creationDate,description)
         return response
     else:
         return not_found()
-
-    return {'message': 'received'}
 
 @app.route('/projects', methods=['GET'])
 def get_projects():
     arguments=request.args
     if arguments != {}:
         if 'active' in arguments and not('creationDate>' in arguments or 'creationDate<' in arguments):
-            response=filter_active_project(arguments['active'])
+            response=projectServices.filter_active_project(arguments['active'])
             return response
         if ('creationDate>' in arguments or 'creationDate<' in arguments) and not('active' in arguments):
             for clave,val in arguments.items():
                 response=slice_string_projects(clave)
-                result=filter_date_projects(response,arguments[response[0]+response[1]])
+                result=projectServices.filter_date_projects(response,arguments[response[0]+response[1]])
             response=result
             return response
         if 'active' in arguments and ('creationDate>' in arguments or 'creationDate<' in arguments):
@@ -194,23 +117,14 @@ def get_projects():
                 for clave,val in arguments.items():
                     if clave == 'creationDate>' or clave == 'creationDate<':
                         response=slice_string_projects(clave)
-                        result=filter_active_date_projects(arguments['active'],response,arguments[response[0]+response[1]])
+                        result=projectServices.filter_active_date_projects(arguments['active'],response,arguments[response[0]+response[1]])
                         response=result
                         return response  
         # return 'Hola'   
     else:
-        #obtener los datos que tenemos en la db
-        # users = mongo.db.users.find({'active':'true'})
-        projects = mongo.db.projects.find()
-        # convertir de bson a json
-        response = json_util.dumps(projects)
-        # el cliente lo vera como un string es por eso que necesitamos el mimetype 
-        return Response(response, mimetype='application/json')
+        response = projectServices.get_projects()
+        return response
 
-def filter_active_project(active):
-    users = mongo.db.projects.find({'active':active})
-    response = json_util.dumps(users)
-    return Response(response, mimetype='application/json')
 
 def slice_string_projects(my_str):
     my_string=str(my_str)
@@ -219,33 +133,15 @@ def slice_string_projects(my_str):
     response = [key,symbol]
     return response
 
-def filter_date_projects(key,values):
-    if key[1]=='>':
-        filter=mongo.db.projects.find({key[0]:{"$gte":(values)}})
-    if key[1]=='<':
-        filter=mongo.db.projects.find({key[0]:{"$lte": (values)}})     
-    response = json_util.dumps(filter)
-    return Response(response, mimetype='application/json')
-
-def filter_active_date_projects(active,key,values):
-    if key[1]=='>':
-        filter=mongo.db.projects.find({"$and":[{"active":active},{key[0]:{"$gte": (values)}}]})
-    if key[1]=='<':
-        filter=mongo.db.projects.find({"$and":[{"active":active},{key[0]:{"$lte": (values)}}]})   
-    response = json_util.dumps(filter)
-    return Response(response, mimetype='application/json')
 
 @app.route('/projects/<id>', methods=['GET'])
 def get_project(id):
-    #Con fine_one vamos a obtener unicamente el primer dato con el que haga match
-    user = mongo.db.projects.find_one({'_id':ObjectId(id)}) #convertimos el id string a un ObjectId
-    response = json_util.dumps(user)
-    return Response(response, mimetype="application/json")
+    response = projectServices.get_project(id)
+    return response
    
 @app.route('/projects/<id>', methods=['DELETE'])
 def delete_project(id):
-    mongo.db.projects.delete_one({'_id': ObjectId(id)})
-    response = jsonify({'message':'Project ' + id + ' was Deleted successfully'}) 
+    response = projectServices.delete_project(id)
     return response
 
 @app.route('/projects/<id>', methods=['PUT'])
@@ -258,21 +154,15 @@ def update_project(id):
     description = request.json['description']
     
     if projectName and projectType and userId and active and creationDate and description:
-        mongo.db.projects.update_one({'_id':ObjectId(id)}, {'$set':{
-            'projectName':projectName,
-            'projectType':projectType,
-            'userId':userId,
-            'active':active,
-            'creationDate':creationDate,
-            'description':description
-        }})
-        response = jsonify({'message': 'Project ' + id + 'was update successfully'})
+        response = projectServices.update_project(id,projectName,projectType,userId,active,creationDate,description)
         return response
     else:
         return not_found()
-    return {'message': 'received'}
 
-
+@app.route('/users/<id>/projects', methods=['GET'])
+def get_user_project(id):
+    response = projectServices.get_user_project(id)
+    return response
 
 
 @app.errorhandler(404)
